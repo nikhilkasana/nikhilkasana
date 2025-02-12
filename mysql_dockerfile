@@ -1,2 +1,3 @@
 FROM mysql:latest
 COPY ./mysql-config.cnf /etc/mysql/conf.d/
+PORT 5432
