@@ -1,10 +1,41 @@
-- 👋 Hi, I’m @nikhilkasana
-- 👀 I’m interested in devops & cloud.
-- 🌱 I’m currently learning aws and devops
-- 💞️ I’m looking to collaborate on ...
-- 📫 How to reach me ...
+WordPress and MySQL Dockerized Setup with CI/CD Pipeline
+This repository contains Dockerfiles for WordPress and MySQL, along with a Jenkinsfile to configure a CI/CD pipeline for automated builds and deployments.
 
-<!---
-nikhilkasana/nikhilkasana is a ✨ special ✨ repository because its `README.md` (this file) appears on your GitHub profile.
-You can click the Preview link to take a look at your changes.
---->
+Table of Contents
+Prerequisites
+
+Project Structure
+
+Docker Setup
+
+CI/CD Pipeline Configuration
+
+How to Use
+
+Contributing
+
+License
+
+Prerequisites
+Before you begin, ensure you have the following installed:
+
+Docker
+
+Docker Compose
+
+Jenkins (for CI/CD pipeline)
+
+Git
+
+wordpress-mysql-docker/
+├── Dockerfile-wordpress      # Dockerfile for WordPress
+├── Dockerfile-mysql          # Dockerfile for MySQL
+├── docker-compose.yml        # Docker Compose file to orchestrate services
+├── Jenkinsfile               # CI/CD pipeline configuration for Jenkins
+├── README.md                 # Project documentation
+└── scripts/                  # Additional scripts (if any)
+
+
+License
+This project is licensed under the MIT License. See the LICENSE file for details.
+
