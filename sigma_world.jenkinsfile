@@ -1,0 +1,127 @@
+pipeline {
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '5', artifactNumToKeepStr: '5'))
+    }
+    agent any
+
+    environment {
+        DOCKER_REGISTRY = 'nikhil1644'
+        WORDPRESS_IMAGE = "${DOCKER_REGISTRY}/nikhil_repo:wordpress_latest"
+        MYSQL_IMAGE = "${DOCKER_REGISTRY}/nikhil_repo:sqldb_latest"
+        DOCKERHUB_CREDENTIALS = credentials('docker-cred')
+        EC2_HOST = '3.110.132.111'
+        SSH_USER = 'ubuntu'
+        //SSH_KEY = '/var/lib/jenkins/.ssh/sigma_key' 
+        WORDPRESS_DIR = '/var/www/wordpress'
+        PGSQL_DIR = "/var/lib/postgresql/data"
+        GITHUB_REPO = 'https://github.com/nikhilkasana/nikhilkasana.git'
+        GITHUB_BRANCH = 'main'
+    }
+
+    stages {
+        stage('Checkout Code from GitHub') {
+            steps {
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: "${env.GITHUB_BRANCH}"]],
+                    userRemoteConfigs: [[
+                        url: "${env.GITHUB_REPO}",
+                        credentialsId: 'github-creds'
+                    ]]
+                ])
+            }
+        }
+
+        stage('Build WordPress Docker Image') {
+            steps {
+                script {
+                    echo 'Building WordPress Docker image...'
+                    sh 'docker build -t nikhil1644/nikhil_repo:wordpress_latest -f wordpress_dockerfile .'
+                }
+            }
+        }
+
+        stage('Build MySQL Docker Image') {
+            steps {
+                script {
+                    echo 'Building MySQL Docker image...'
+                    sh 'docker build -t nikhil1644/nikhil_repo:sqldb_latest -f mysql_dockerfile .'
+                }
+            }
+        }
+
+        stage('Push Docker Images to Docker Hub') {
+            steps {
+                script {
+                    echo "Logging into Docker Hub..."
+                    sh """
+                        echo '${DOCKERHUB_CREDENTIALS_PSW}' | docker login -u '${DOCKERHUB_CREDENTIALS_USR}' --password-stdin
+                    """
+
+                    echo "Pushing WordPress image..."
+                    sh "docker push nikhil1644/nikhil_repo:wordpress_latest"
+
+                    echo "Pushing MySQL image..."
+                    sh "docker push nikhil1644/nikhil_repo:sqldb_latest"
+
+                   
+                }
+            }
+        }
+
+        stage('Deploy to EC2') {
+    steps {
+        script {
+            
+    
+                sh """
+                    docker images
+                    
+                    
+                    # Stop and remove existing containers
+                    docker stop wordpress-app postgres-db || true
+                    docker rm wordpress-app postgres-db || true
+
+                    # Pull the latest Docker images
+                    docker pull ${WORDPRESS_IMAGE}
+                    docker pull ${MYSQL_IMAGE}
+
+                    # Create persistent directories if they don't exist
+                   sudo mkdir -p ${WORDPRESS_DIR}/wp-content
+                   sudo mkdir -p ${PGSQL_DIR}
+
+                    # Run postgres container
+                   
+
+docker run -d \
+    --name postgres-db \
+    --network mynetwork \
+    -e POSTGRES_USER=postgres \
+    -e POSTGRES_PASSWORD="Nikhil123#" \
+    -e POSTGRES_DB=database-1 \
+    postgres:latest
+
+docker run -d \
+    --name wordpress-app \
+    --network mynetwork \
+    -e WORDPRESS_DB_HOST=postgres-db:5432 \
+    -e WORDPRESS_DB_USER=postgres \
+    -e WORDPRESS_DB_PASSWORD="Nikhil123#" \
+    -e WORDPRESS_DB_NAME=database-1 \
+    -v /home/user/wordpress/wp-content:/var/www/html/wp-content \
+    -p 80:80 \
+    wordpress:latest
+                        docker ps
+                    
+                """
+            }
+        }
+    }
+}
+}
+
+    
+
+    
+
+
