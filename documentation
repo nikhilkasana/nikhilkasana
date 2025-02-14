@@ -1,0 +1,12 @@
+Jenkins Declarative Pipeline Documentation
+Pipeline Overview
+This Jenkins Declarative Pipeline automates the process of building and deploying a Dockerized application. It consists of multiple stages, including checking out source code, building a Docker image, and more (additional stages can be added as needed).
+
+Key Notes
+Docker Integration: Ensure Docker is installed and configured on the Jenkins agent.
+jenkins installation with port 8080 comfigured on ec2 as inbound rule
+docker installation on server with docker user added to required group.
+required plugins installed on jenkins server.
+
+Credentials: Use Jenkins credentials to securely manage Docker registry credentials.  
+  
